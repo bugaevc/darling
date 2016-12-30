@@ -355,11 +355,11 @@ pid_t spawnInitProcess(void)
 		sprintf(opts, "lowerdir=/system-root%s,upperdir=/,workdir=/system-root%s.workdir", LIBEXEC_PATH, prefix);
 
 		// Mount overlay onto our prefix
-		if (mount("overlay", "/", "overlay", 0, opts) != 0)
-		{
-			fprintf(stderr, "Cannot mount overlay: %s\n", strerror(errno));
-			exit(1);
-		}
+		// if (mount("overlay", "/", "overlay", 0, opts) != 0)
+		// {
+		// 	fprintf(stderr, "Cannot mount overlay: %s\n", strerror(errno));
+		// 	exit(1);
+		// }
 
 		free(opts);
 
