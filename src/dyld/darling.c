@@ -197,7 +197,7 @@ pid_t spawnChild(int pidInit, const char *path, const char *const argv[])
 		}
 		close(fdNS);
 
-		snprintf(pathNS, sizeof(pathNS), "/proc/%d/ns/user", pidInit);
+		snprintf(pathNS, sizeof(pathNS), "/system-root/proc/%d/ns/user", pidInit);
 		fdNS = open(pathNS, O_RDONLY);
 		if (fdNS < 0)
 		{
