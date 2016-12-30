@@ -338,6 +338,13 @@ pid_t spawnInitProcess(void)
 		}
 
 		snprintf(putOld, sizeof(putOld), "%s/system-root", prefix);
+
+		if (mount(prefix, prefix, NULL, MS_BIND, NULL) != 0)
+		{
+			fprintf(stderr, "Cannot bind-mount %s: %s\n", prefix, strerror(errno));
+			exit(1);
+		}
+
 		if (syscall(SYS_pivot_root, prefix, putOld) != 0)
 		{
 			fprintf(stderr, "Cannot pivot_root: %s\n", strerror(errno));
