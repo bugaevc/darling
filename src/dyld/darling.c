@@ -302,31 +302,25 @@ pid_t spawnInitProcess(void)
 			exit(1);
 		}
 
-		snprintf(putOld, sizeof(putOld), "%s/system-root", prefix);
+		opts = (char*) malloc(strlen(prefix)*2 + sizeof(LIBEXEC_PATH) + 100);
+		sprintf(opts, "lowerdir=%s,upperdir=%s,workdir=%s.workdir", LIBEXEC_PATH, prefix, prefix);
 
-		if (mount(prefix, prefix, NULL, MS_BIND, NULL) != 0)
+		// Mount overlay onto our prefix
+		if (mount("overlay", prefix, "overlay", 0, opts) != 0)
 		{
-			fprintf(stderr, "Cannot bind-mount %s: %s\n", prefix, strerror(errno));
+			fprintf(stderr, "Cannot mount overlay: %s\n", strerror(errno));
 			exit(1);
 		}
+
+		free(opts);
+
+		snprintf(putOld, sizeof(putOld), "%s/system-root", prefix);
 
 		if (syscall(SYS_pivot_root, prefix, putOld) != 0)
 		{
 			fprintf(stderr, "Cannot pivot_root: %s\n", strerror(errno));
 			exit(1);
 		}
-
-		opts = (char*) malloc(strlen(prefix)*2 + sizeof(LIBEXEC_PATH) + 100);
-		sprintf(opts, "lowerdir=/system-root%s,upperdir=/,workdir=/system-root%s.workdir", LIBEXEC_PATH, prefix);
-
-		// Mount overlay onto our prefix
-		// if (mount("overlay", "/", "overlay", 0, opts) != 0)
-		// {
-		// 	fprintf(stderr, "Cannot mount overlay: %s\n", strerror(errno));
-		// 	exit(1);
-		// }
-
-		free(opts);
 
 		// Drop the privileges
 		setresuid(g_originalUid, g_originalUid, g_originalUid);
