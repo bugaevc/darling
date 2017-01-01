@@ -89,7 +89,7 @@ int main(int argc, const char** argv)
 		putInitPid(pidInit);
 	}
 
-	pidChild = spawnChild(pidInit, "/system-root/bin/busybox", (const char *[2]) {"sh", NULL});
+	pidChild = spawnChild(pidInit, SYSTEM_ROOT "/bin/busybox", (const char *[2]) {"sh", NULL});
 
 	// Drop the privileges so that we can be killed, etc by the user
 	seteuid(g_originalUid);
@@ -162,7 +162,7 @@ pid_t spawnChild(int pidInit, const char *path, const char *const argv[])
 		}
 		close(fdNS);
 
-		snprintf(pathNS, sizeof(pathNS), "/system-root/proc/%d/ns/user", pidInit);
+		snprintf(pathNS, sizeof(pathNS), SYSTEM_ROOT "/proc/%d/ns/user", pidInit);
 		fdNS = open(pathNS, O_RDONLY);
 		if (fdNS < 0)
 		{
@@ -314,7 +314,7 @@ pid_t spawnInitProcess(void)
 
 		free(opts);
 
-		snprintf(putOld, sizeof(putOld), "%s/system-root", prefix);
+		snprintf(putOld, sizeof(putOld), "%s" SYSTEM_ROOT, prefix);
 
 		if (syscall(SYS_pivot_root, prefix, putOld) != 0)
 		{
@@ -535,7 +535,7 @@ void setupPrefix()
 
 	createDir(prefix);
 
-	snprintf(path, sizeof(path), "%s/system-root", prefix);
+	snprintf(path, sizeof(path), "%s" SYSTEM_ROOT, prefix);
 	createDir(path);
 
 	snprintf(path, sizeof(path), "%s/dev", prefix);
