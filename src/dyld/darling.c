@@ -89,7 +89,7 @@ int main(int argc, const char** argv)
 		putInitPid(pidInit);
 	}
 
-	pidChild = spawnChild(pidInit, SYSTEM_ROOT "/bin/busybox", (const char *[2]) {"sh", NULL});
+	pidChild = spawnChild(pidInit, "/system-root/bin/bash", (const char *[2]) {"-bash", NULL});
 
 	// Drop the privileges so that we can be killed, etc by the user
 	seteuid(g_originalUid);
