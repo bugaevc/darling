@@ -1,12 +1,12 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#define LIB_PATH "/system-root${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/darling"
-#define LIBEXEC_PATH "/system-root${CMAKE_INSTALL_PREFIX}/libexec/darling"
+#define LIB_PATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/darling"
+#define LIBEXEC_PATH "${CMAKE_INSTALL_PREFIX}/libexec/darling"
 #define LIB_DIR_NAME "lib@SUFFIX@"
 #define INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}"
-#define SHARE_PATH "/system-root${CMAKE_INSTALL_PREFIX}/share/darling"
-#define DYLD_PATH "/system-root${CMAKE_INSTALL_PREFIX}/bin/dyld"
+#define SHARE_PATH "${CMAKE_INSTALL_PREFIX}/share/darling"
+#define DYLD_PATH "${CMAKE_INSTALL_PREFIX}/bin/dyld"
 
 #define ETC_DARLING_PATH "/etc/darling"
 
@@ -17,7 +17,7 @@
 #ifndef __APPLE__
 
 /*
- * Credit:
+ * Credit: 
  *
  *    David Chisnall
  *       http://comments.gmane.org/gmane.comp.desktop.etoile.devel/1556
