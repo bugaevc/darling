@@ -117,11 +117,11 @@ int main(int argc, const char** argv)
 			*(to - 1) = '\0';
 
 			pidChild = spawnChild(pidInit, SYSTEM_ROOT DYLD_PATH,
-				(const char *[5]) {"dyld", "/bin/bash", "-c", buffer, NULL});
+				(const char *[5]) {SYSTEM_ROOT DYLD_PATH, "/bin/bash", "-c", buffer, NULL});
 		}
 		else
 			pidChild = spawnChild(pidInit, SYSTEM_ROOT DYLD_PATH,
-				(const char *[3]) {"dyld", "/bin/bash", NULL});
+				(const char *[3]) {SYSTEM_ROOT DYLD_PATH, "/bin/bash", NULL});
 	}
 
 	// Drop the privileges so that we can be killed, etc by the user
