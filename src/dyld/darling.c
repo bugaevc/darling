@@ -72,7 +72,7 @@ int main(int argc, const char** argv)
 		prefix = defaultPrefixPath();
 	if (!prefix)
 		return 1;
-	setenv("DPREFIX", prefix, 0);
+	unsetenv("DPREFIX");
 
 	if (!checkPrefixDir())
 		setupPrefix();
@@ -228,8 +228,6 @@ void setupChild(const char *curPath)
 {
 	char buffer1[4096];
 	char buffer2[4096];
-
-	setenv("DPREFIX", "/", 1);
 
 	setenv("PATH",
 		"/usr/bin:"
