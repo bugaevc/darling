@@ -4,6 +4,7 @@
 .text
 
 dyld_path:
+.ascii "/system-root"
 .string DYLD_PATH
 
 proc_self_exe:
@@ -64,4 +65,3 @@ fail:
         syscall
 
 	ud2
-
