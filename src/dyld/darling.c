@@ -89,7 +89,42 @@ int main(int argc, const char** argv)
 		putInitPid(pidInit);
 	}
 
-	pidChild = spawnChild(pidInit, "/system-root/bin/bash", (const char *[2]) {"-bash", NULL});
+	if (strcmp(argv[1], "shell") != 0)
+	{
+		const char *argv_child[argc + 1];
+
+		argv_child[0] = "dyld";
+		for (int i = 1; i < argc; i++)
+			argv_child[i] = argv[i];
+		argv_child[argc] = NULL;
+
+		pidChild = spawnChild(pidInit, DYLD_PATH, argv_child);
+	}
+	else
+	{
+		// Spawn the shell
+		snprintf(path, sizeof(path), "%s/bin/bash", prefix);
+		if (argc > 2)
+		{
+			size_t total_len = 0;
+			for (int i = 2; i < argc; i++)
+			total_len += strlen(argv[i]);
+
+			char buffer[total_len + argc];
+
+			char *to = buffer;
+			for (int i = 2; i < argc; i++)
+			to = stpcpy(stpcpy(to, argv[i]), " ");
+			// Overwrite the last whitespace
+			*(to - 1) = '\0';
+
+			pidChild = spawnChild(pidInit, DYLD_PATH,
+				(const char *[5]) {"dyld", path, "-c", buffer, NULL});
+		}
+		else
+			pidChild = spawnChild(pidInit, DYLD_PATH,
+				(const char *[3]) {"dyld", path, NULL});
+	}
 
 	// Drop the privileges so that we can be killed, etc by the user
 	seteuid(g_originalUid);
