@@ -53,18 +53,7 @@ $ sudo pacman -S cmake clang flex icu fuse
 ```
 
 ````
-cd darling
-mkdir -p build/x86-64
-cd build/x86-64
 cmake ../.. -DCMAKE_TOOLCHAIN_FILE=../../Toolchain-x86_64.cmake
-make
-make install
-````
-
-To build the new, experimental `darling` executable:
-
-````
-cmake ../.. -DCMAKE_TOOLCHAIN_FILE=../../Toolchain-x86_64.cmake -DNEW_DARLING=TRUE
 make
 make install
 chmod +s $(which darling)
