@@ -38,7 +38,7 @@ along with Darling.  If not, see <http://www.gnu.org/licenses/>.
 #include "darling-config.h"
 
 // Path where the system root gets "mounted" inside the prefix
-#define SYSTEM_ROOT "/system-root"
+#define SYSTEM_ROOT "/Volumes/SystemRoot"
 
 const char* DARLING_INIT_COMM = "darling-init";
 char *prefix;
