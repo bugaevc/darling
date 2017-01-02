@@ -90,14 +90,31 @@ int main(int argc, const char** argv)
 
 	if (strcmp(argv[1], "shell") != 0)
 	{
+		char *path = realpath(argv[1], NULL);
+		char *fullPath;
+
+		if (path == NULL)
+		{
+			fprintf(stderr, "Cannot resolve path: %s\n", strerror(errno));
+			exit(1);
+		}
+
 		const char *argv_child[argc + 1];
 
-		argv_child[0] = "dyld";
-		for (int i = 1; i < argc; i++)
+		argv_child[0] = SYSTEM_ROOT DYLD_PATH;
+
+		fullPath = malloc(strlen(SYSTEM_ROOT) + strlen(path) + 1);
+		strcpy(fullPath, SYSTEM_ROOT);
+		strcat(fullPath, path);
+		argv_child[1] = fullPath;
+
+		for (int i = 2; i < argc; i++)
 			argv_child[i] = argv[i];
 		argv_child[argc] = NULL;
 
 		pidChild = spawnChild(pidInit, SYSTEM_ROOT DYLD_PATH, argv_child);
+		free(path);
+		free(fullPath);
 	}
 	else
 	{
