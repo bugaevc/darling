@@ -45,6 +45,7 @@ static iniconfig_t version_conf = NULL;
 static inivalmap_t version_conf_sect = NULL;
 static void copyout_string(const char* str, char* out, unsigned long* out_len);
 static void need_uname(void);
+static void fill_kinfo_proc(pid_t pid, struct kinfo_proc *res);
 
 long sys_sysctl(int* name, unsigned int nlen, void* old,
 		unsigned long* oldlen, void* _new, unsigned long newlen)
@@ -58,7 +59,7 @@ long sys_sysctl(int* name, unsigned int nlen, void* old,
 	{
 		return sysctl_name_to_oid((const char*) _new, (int*) old, oldlen);
 	}
-	
+
 	if (name[0] == CTL_HW)
 	{
 		int* ovalue = (int*) old;
@@ -89,7 +90,7 @@ long sys_sysctl(int* name, unsigned int nlen, void* old,
 		if (*oldlen < sizeof(int))
 			return -EINVAL;
 		*oldlen = sizeof(int);
-		
+
 		switch (name[1])
 		{
 		case HW_AVAILCPU:
@@ -169,13 +170,59 @@ long sys_sysctl(int* name, unsigned int nlen, void* old,
 			}
 			case KERN_PROC:
 			{
-				// Returns array of struct kinfo_proc
-				if (nlen < 4)
+				int fd;
+				char path[4096];
+
+				if (nlen < 3 || (nlen == 3 && name[2] != KERN_PROC_ALL))
 					return -ENOTDIR;
 				switch (name[2])
 				{
+					case KERN_PROC_ARGS:
+						snprintf(path, sizeof(path), "/proc/%d/cmdline", name[3]);
+						fd = sys_open(path, BSD_O_RDONLY, 0);
+						if (fd < 0)
+							return -ENOENT;
+						*oldlen = sys_read(fd, old, *oldlen);
+						sys_close(fd);
+						// Conditionally change the title
+						if (_new != NULL)
+						{
+							snprintf(path, sizeof(path), "/proc/%d/comm", name[3]);
+							fd = sys_open(path, BSD_O_WRONLY, 0);
+							if (fd < 0)
+								return -ENOENT;
+							sys_write(fd, _new, newlen);
+							sys_close(fd);
+						}
+						return 0;
+					case KERN_PROC_PATHNAME:
+						if (name[3] != -1)
+							snprintf(path, sizeof(path), "/proc/%d/exe", name[3]);
+						else
+							snprintf(path, sizeof(path), "/proc/sef/exe");
+						*oldlen = sys_readlink(path, old, *oldlen);
+						if (*oldlen < 0)
+							return -ENOENT;
+						return 0;
+					// Return array of struct kinfo_proc
 					case KERN_PROC_ALL:
+						DIR *dir = sys_opendir("/proc");
+						struct dirent *de;
+						struct kinfo_proc *ptr = old;
+						while ((de = readdir(dir)) != NULL)
+						{
+							if (!isdigit(de->d_name[0]))
+								continue;
+							fill_kinfo_proc(atoi(de->d_name), ptr++);
+						}
+						*oldlen = (char *) ptr - (char *) old;
+						closedir(dir);
+						return 0;
 					case KERN_PROC_PID:
+						// FIXME: check that the process exists
+						fill_kinfo_proc(name[3], (struct kinfo_proc *) old);
+						*oldlen = sizeof(struct kinfo_proc);
+						return 0;
 					case KERN_PROC_TTY:
 					case KERN_PROC_UID:
 					case KERN_PROC_PGRP:
@@ -278,7 +325,7 @@ static long sysctl_name_to_oid(const char* name, int* oid_name,
 {
 	const char* dot;
 	unsigned long cat_len;
-	
+
 	if (*oid_len < 2)
 		return -EINVAL;
 
@@ -292,7 +339,7 @@ static long sysctl_name_to_oid(const char* name, int* oid_name,
 	{
 		oid_name[0] = CTL_HW;
 		*oid_len = 2 * sizeof(int);
-		
+
 		if (strcmp(dot+1, "activecpu") == 0)
 			oid_name[1] = HW_AVAILCPU;
 		else if (strcmp(dot+1, "ncpu") == 0)
@@ -317,7 +364,7 @@ static long sysctl_name_to_oid(const char* name, int* oid_name,
 			oid_name[1] = _HW_CPUTHREADTYPE;
 		else
 			return -ENOTDIR;
-		
+
 		return 0;
 	}
 	else if (strncmp(name, "kern", cat_len) == 0)
@@ -337,3 +384,26 @@ static long sysctl_name_to_oid(const char* name, int* oid_name,
 	return -ENOTDIR;
 }
 
+static void fill_kinfo_proc(pid_t pid, struct kinfo_proc *res)
+{
+	int fd;
+	int len;
+	char buffer[4096];
+	char state;
+
+	snprintf(buffer, sizeof(buffer), "/proc/%d/stat", pid);
+	fd = sys_open(buffer, BSD_O_RDONLY, 0);
+	if (fd < 0)
+		return;
+	len = sys_read(fd, buffer, sizeof(buffer) - 1);
+	buffer[len] = '\0';
+	sys_close(fd);
+	sscanf(buffer, "%d (%s) %c %d",
+		&res->kp_proc.p_pid,
+		res->kp_eproc.e_paddr->p_comm,
+		&state,
+		&res->kp_eproc.e_ppid
+	);
+
+	// TODO
+}
