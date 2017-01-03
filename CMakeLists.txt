@@ -58,5 +58,26 @@ add_subdirectory(src)
 if (NOT DARLING_NO_EXECUTABLES)
 	install(FILES etc/dylib.conf etc/version.conf
 		DESTINATION libexec/darling/etc/darling)
-endif (NOT DARLING_NO_EXECUTABLES)
 
+	install(DIRECTORY DESTINATION system-root)
+	install(DIRECTORY DESTINATION Volumes)
+	install(DIRECTORY DESTINATION Applications)
+
+	install(DIRECTORY DESTINATION proc)
+
+	install(DIRECTORY DESTINATION var)
+	install(DIRECTORY DESTINATION var/root)
+	install(DIRECTORY DESTINATION var/run)
+	InstallSymlink(/dev/log var/run/syslog)
+
+	install(DIRECTORY DESTINATION usr)
+	install(DIRECTORY DESTINATION usr/local)
+	install(DIRECTORY DESTINATION usr/local/share)
+	InstallSymlink(/system-root/usr/local/share/darling usr/local/share/darling)
+
+	InstallSymlink(/system-root/dev dev)
+	InstallSymlink(/system-root/tmp tmp)
+	InstallSymlink(/system-root/lib lib)
+	InstallSymlink(/system-root/lib64 lib64)
+	InstallSymlink(/system-root/home Users)
+endif (NOT DARLING_NO_EXECUTABLES)
