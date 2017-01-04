@@ -328,16 +328,17 @@ void missingSetuidRoot(void)
 pid_t spawnInitProcess(void)
 {
 	pid_t pid;
-	int pipefd[2];
 	char idmap[100];
 	char buffer[1];
 	FILE *file;
-
+	/*
+	int pipefd[2];
 	if (pipe(pipefd) == -1)
 	{
 		fprintf(stderr, "Cannot create a pipe for synchronization: %s\n", strerror(errno));
 		exit(1);
 	}
+	*/
 
 	if (unshare(CLONE_NEWPID) != 0)
 	{
@@ -416,7 +417,6 @@ pid_t spawnInitProcess(void)
 			fprintf(stderr, "Cannot unshare user namespace: %s\n", strerror(errno));
 			exit(1);
 		}
-		*/
 
 		// Tell the parent we're ready for it to set up UID/GID mappings
 		write(pipefd[1], buffer, 1);
@@ -424,11 +424,13 @@ pid_t spawnInitProcess(void)
 		// And wait for it to do it
 		read(pipefd[0], buffer, 1);
 		close(pipefd[0]);
+		*/
 
 		darlingPreInit();
 		// Never returns
 	}
 
+	/*
 	// Wait for the child to drop UID/GIDs and unshare stuff
 	read(pipefd[0], buffer, 1);
 	close(pipefd[0]);
@@ -462,6 +464,7 @@ pid_t spawnInitProcess(void)
 	// Resume the child
 	write(pipefd[1], buffer, 1);
 	close(pipefd[1]);
+	*/
 
 	return pid;
 }
