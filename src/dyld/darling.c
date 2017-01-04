@@ -613,6 +613,9 @@ void setupPrefix()
 
 	createDir(prefix);
 
+	snprintf(path, sizeof(path), "%s/Volumes", prefix);
+	createDir(path);
+
 	seteuid(0);
 	setegid(0);
 }
