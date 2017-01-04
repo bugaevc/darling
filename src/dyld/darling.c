@@ -271,12 +271,6 @@ void setupChild(const char *curPath)
 		"/sbin:"
 		"/usr/local/bin",
 		1);
-	setenv("LD_LIBRARY_PATH",
-		// SYSTEM_ROOT "/lib64:"
-		SYSTEM_ROOT "/lib/x86_64-linux-gnu:"
-		SYSTEM_ROOT "/usr/local/lib/darling:"
-		SYSTEM_ROOT "/usr/lib/x86_64-linux-gnu",
-		1);
 
 	sscanf(getenv("HOME"), "/home/%4096s", buffer1);
 	snprintf(buffer2, sizeof(buffer2), "/Users/%s", buffer1);
