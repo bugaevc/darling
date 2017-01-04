@@ -87,6 +87,6 @@ if (NOT DARLING_NO_EXECUTABLES)
 	InstallSymlink(/Volumes/SystemRoot/etc/group ${CMAKE_INSTALL_PREFIX}/libexec/darling/etc/group)
 
 	install(DIRECTORY DESTINATION libexec/darling/etc/ld.so.conf.d)
-	install(CODE "execute_process(COMMAND bash ${DARLING_TOP_DIRECTORY}/setup-ld-so.sh WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/libexec/darling)")
+	install(CODE "execute_process(COMMAND bash ${DARLING_TOP_DIRECTORY}/src/setup-ld-so.sh WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/libexec/darling)")
 
 endif (NOT DARLING_NO_EXECUTABLES)
