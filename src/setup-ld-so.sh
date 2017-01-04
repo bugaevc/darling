@@ -9,7 +9,4 @@ for file in /etc/ld.so.conf $(find /etc/ld.so.conf.d/ -type f); do
     awk '/^\// { print "/Volumes/SystemRoot" $0 }; /^[^/]/' $file > .$file
 done
 
-unshare --mount=mount-ns
-nsenter --mount=mount-ns mount --rbind / Volumes/SystemRoot
-nsenter --mount=mount-ns ldconfig -r .
-umount mount-ns
+unshare --mount bash -c "mount --rbind / Volumes/SystemRoot && ldconfig -r ."
