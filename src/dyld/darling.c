@@ -269,6 +269,10 @@ void setupChild(const char *curPath)
 		"/usr/local/bin",
 		1);
 
+	setenv("LD_LIBRARY_PATH",
+		SYSTEM_ROOT LIB_PATH
+		1);
+
 	sscanf(getenv("HOME"), "/home/%4096s", buffer1);
 	snprintf(buffer2, sizeof(buffer2), "/Users/%s", buffer1);
 	setenv("HOME", buffer2, 1);
