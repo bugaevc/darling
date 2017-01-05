@@ -11,4 +11,4 @@ done
 
 echo /Volumes/SystemRoot$1 > ./etc/ld.so.conf.d/darling.conf
 
-unshare --mount bash -c "mount --rbind / Volumes/SystemRoot && ldconfig -r ."
+unshare --mount bash -c "mount --rbind / Volumes/SystemRoot && ldconfig -r . -X"
