@@ -270,7 +270,7 @@ void setupChild(const char *curPath)
 		1);
 
 	setenv("LD_LIBRARY_PATH",
-		SYSTEM_ROOT LIB_PATH
+		SYSTEM_ROOT LIB_PATH,
 		1);
 
 	sscanf(getenv("HOME"), "/home/%4096s", buffer1);
