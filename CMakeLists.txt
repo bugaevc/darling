@@ -56,8 +56,10 @@ option(FRAMEWORK_APPKIT "Enable AppKit development code" OFF)
 add_subdirectory(src)
 
 if (NOT DARLING_NO_EXECUTABLES)
-	install(FILES etc/dylib.conf etc/version.conf etc/resolv.conf
+	install(FILES etc/dylib.conf etc/version.conf
 		DESTINATION libexec/darling/etc/darling)
+	install(FILES etc/resolv.conf
+		DESTINATION libexec/darling/etc)
 
 	install(DIRECTORY DESTINATION libexec/darling/Volumes)
 	install(DIRECTORY DESTINATION libexec/darling/Volumes/SystemRoot)
