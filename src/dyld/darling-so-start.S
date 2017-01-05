@@ -5,7 +5,7 @@
 
 // For running executables from inside the prefix
 dyld_path:
-.ascii "/Volumes/SystemRoot"
+.ascii SYSTEM_ROOT
 .string DYLD_PATH
 
 // Additionally, we support running them from the host system
