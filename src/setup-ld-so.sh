@@ -9,4 +9,6 @@ for file in /etc/ld.so.conf $(find /etc/ld.so.conf.d/ -type f); do
     awk '/^\// { print "/Volumes/SystemRoot" $0 }; /^[^/]/' $file > .$file
 done
 
+echo /Volumes/SystemRoot$1 > ./etc/ld.so.conf.d/darling.conf
+
 unshare --mount bash -c "mount --rbind / Volumes/SystemRoot && ldconfig -r ."
